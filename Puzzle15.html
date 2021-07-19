@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="ru">
+    <head>
+        <meta charset="UTF-8">
+        <title>Игра 15</title>
+        <style>
+            body{
+                align-items: center;
+            }
+            td{
+                background-color: green;
+                width: 100px;
+                height: 100px;
+                font-size: 50px;
+                font-family: Arial, Helvetica, sans-serif;
+                color: yellow;
+                text-align: center;
+            }
+            td:hover{
+                background-color: yellowgreen;
+                color: black;
+            }
+            #congratulations{
+                background-color: green;
+                width: 220px;
+                height: 110px;
+                color: yellow;
+                text-align: center;
+                font-size: 50px;
+            }
+            input{
+                background-color: green;
+                width: 220px;
+                height: 110px;
+                color: yellow;
+                text-align: center;
+                font-size: 24px;
+            }
+            input:hover{
+                background-color: yellowgreen;
+                color: black;
+            }
+        </style>
+    </head>
+    <body>
+        <table id="field" border="1">
+        </table>
+        <div id="congratulations">
+        </div>
+        <script>
+            var isVictory = false;
+            var tableCells = [ [ , , , ], [ , , , ], [ , , , ], [ , , , ] ];
+            var coordinates = [ [ -1, 0 ], [ 0, 1 ], [ 1, 0 ], [ 0, -1 ] ];
+            var cellsValues = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, "", 15];
+            var field = document.getElementById("field");
+            for(let i = 0; i < 4; i++){
+                var row = document.createElement("tr");
+                field.append(row);
+                for(let j = 0; j < 4; j++){
+                    var cell = document.createElement("td");
+                    row.append(cell);
+                    var nextCell = Math.floor(Math.random() * (cellsValues.length));
+                    cell.appendChild(document.createTextNode(cellsValues[nextCell]));
+                    cellsValues.splice(nextCell, 1);
+                    tableCells[i][j] = cell;
+                    cell.onclick = function() {
+                        if(!isVictory){
+                            for(var k = 0; k < 4; k++){
+                                if(i + coordinates[k][0] < 4 && i + coordinates[k][0] >= 0 && j + coordinates[k][1] < 4 && j + coordinates[k][1] >= 0){
+                                    if(tableCells[i + coordinates[k][0]][j + coordinates[k][1]].textContent == ""){
+                                        var temp = this.textContent;
+                                        this.textContent = ""; 
+                                        tableCells[i + coordinates[k][0]][j + coordinates[k][1]].textContent = temp;
+                                        break;
+                                    }
+                                }
+                            }
+
+                            var counter = 0;
+                            for(var k = 0; k < 4; k++){
+                                for(var z = 0; z < 4; z++){
+                                    if (tableCells[k][z].textContent == (k * 4 + z + 1) || (k == 3 && z == 3)){
+                                        counter += 1;
+                                    }
+                                }
+                            }
+                            if(counter == 16){
+                                var congratulations = document.getElementById("congratulations");
+                                congratulations.append("Вы победили!");
+                                isVictory = true;
+                                var refreshButton = document.createElement("input");
+                                refreshButton.type = "button";
+                                refreshButton.value = "Перемешать числа";
+                                congratulations.append(refreshButton);
+                                refreshButton.onclick = function(){
+                                    isVictory = false;
+                                    this.remove();
+                                    congratulations.textContent = "";
+                                    var cellsValues = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, "", 15];
+                                    for(var k = 0; k < 4; k++){
+                                        for(var z = 0; z < 4; z++){
+                                            var nextCell = Math.floor(Math.random() * (cellsValues.length));
+                                            tableCells[k][z].textContent = cellsValues[nextCell];
+                                            cellsValues.splice(nextCell, 1);
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }           
+        </script>
+    </body>
+</html>
